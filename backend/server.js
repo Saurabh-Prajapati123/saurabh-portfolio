@@ -1,6 +1,6 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
 const cors = require("cors");
+const { Resend } = require("resend");
 require("dotenv").config();
 
 const app = express();
@@ -9,23 +9,15 @@ app.use(cors());
 app.use(express.json());
 
 // ================================
+// RESEND
+// ================================
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// ================================
 // HOME
 // ================================
 app.get("/", (req, res) => {
   res.send("Portfolio Backend is Running");
-});
-
-// ================================
-// EMAIL TRANSPORTER
-// ================================
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
 });
 
 // ================================
@@ -42,8 +34,8 @@ app.post("/api/contact", async (req, res) => {
       });
     }
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
       to: process.env.EMAIL_TO,
       replyTo: Email,
       subject: `New Portfolio Contact - ${Name}`,
@@ -96,8 +88,8 @@ app.post("/api/job-opportunity", async (req, res) => {
       });
     }
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
       to: process.env.EMAIL_TO,
       replyTo: Email,
       subject: `New Job Opportunity - ${JobRole} - ${Company}`,
