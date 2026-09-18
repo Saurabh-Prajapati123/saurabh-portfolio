@@ -88,12 +88,12 @@ app.post("/api/job-opportunity", async (req, res) => {
       });
     }
 
-    await resend.emails.send({
-      from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_TO,
-      replyTo: Email,
-      subject: `New Job Opportunity - ${JobRole} - ${Company}`,
-      text: `
+   const result = await resend.emails.send({
+  from: process.env.EMAIL_FROM,
+  to: process.env.EMAIL_TO,
+  replyTo: Email,
+  subject: `New Job Opportunity - ${JobRole} - ${Company}`,
+  text: `
 NEW JOB OPPORTUNITY
 
 Company: ${Company}
@@ -108,9 +108,10 @@ Salary / CTC: ${Salary || "Not specified"}
 
 Job Description:
 ${Message}
-      `,
-    });
+  `,
+});
 
+console.log("RESEND RESULT:", result);
     res.json({
       success: true,
       message: "Job opportunity sent successfully!",
